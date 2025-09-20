@@ -7,7 +7,13 @@ from typing import Dict, List, Tuple
 from pathlib import Path
 
 # Import our custom modules
-from text_extractor import extract_text_fast, extract_text_with_pages
+try:
+    from text_extractor import extract_text_fast, extract_text_with_pages
+except ImportError:
+    # Fallback to simple version without OpenCV
+    from text_extractor_simple import extract_text_fast, extract_text_with_pages
+    print("Warning: Using simplified text extraction without OpenCV")
+
 from heading_extractor import HeadingExtractor
 try:
     from dynamic_persona_analyzer import DynamicPersonaAnalyzer as PersonaAnalyzer

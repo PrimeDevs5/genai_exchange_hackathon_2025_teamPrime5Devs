@@ -1,0 +1,7 @@
+DISCLAIMER_KEYWORDS: 'disclaimer|terms and conditions|privacy policy|all rights reserved'
+ADDRESS_KEYWORDS: 'address|suite|road|street|avenue|parkway|boulevard|drive'
+INSTRUCTIONAL_KEYWORDS: 'instructions|please read carefully|guidelines|rsvp'
+WEBSITE_PATTERNS: '(https?://[^\s]+|www\.[^\s]+)'
+FOOTER_KEYWORDS: 'page \d+|copyright|©|\d{4} all rights reserved'
+HEADER_KEYWORDS: 'confidential|draft|internal use only'
+FORM_FIELDS: 'name:|date:|signature:|please fill'

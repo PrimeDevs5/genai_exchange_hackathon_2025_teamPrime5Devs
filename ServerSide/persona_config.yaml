@@ -1,0 +1,42 @@
+# Dynamic Persona Configuration
+# This file contains configurable persona patterns that can be easily extended
+
+# Base persona patterns - can be extended without code changes
+persona_patterns:
+  # Travel and Tourism Domain
+  travel_domain: ["travel", "trip", "vacation", "tour", "destination", "hotel", "restaurant", "attraction", "sightseeing", "itinerary", "booking", "accommodation", "transportation", "guide", "culture", "local", "visit", "explore"]
+  
+  # Academic and Research Domain  
+  academic_domain: ["research", "study", "analysis", "methodology", "literature", "review", "findings", "data", "academic", "scholarly", "thesis", "dissertation", "publication", "experiment", "hypothesis", "investigation", "education", "learning", "knowledge", "concept"]
+  
+  # Business and Finance Domain
+  business_domain: ["business", "financial", "revenue", "profit", "market", "investment", "strategy", "performance", "analysis", "growth", "competitive", "portfolio", "risk", "valuation", "operations", "efficiency", "metrics", "optimization"]
+  
+  # Technical Domain
+  technical_domain: ["technology", "software", "development", "programming", "system", "architecture", "design", "implementation", "algorithm", "data", "analytics", "machine learning", "modeling", "engineering", "innovation"]
+  
+  # Healthcare Domain
+  healthcare_domain: ["medical", "health", "clinical", "patient", "diagnosis", "treatment", "therapy", "healthcare", "wellness", "disease", "symptoms", "care", "nursing"]
+  
+  # Legal Domain
+  legal_domain: ["legal", "law", "regulation", "compliance", "contract", "agreement", "litigation", "rights", "jurisdiction", "statute"]
+
+# Task action patterns
+task_patterns:
+  planning: ["plan", "organize", "arrange", "coordinate", "schedule", "prepare", "strategy", "timeline", "itinerary"]
+  analysis: ["analyze", "review", "evaluate", "assess", "examine", "investigate", "study", "compare", "summarize"]
+  research: ["research", "investigate", "explore", "discover", "find", "identify", "locate", "determine"]
+  creation: ["create", "develop", "build", "design", "construct", "generate", "produce", "establish", "formulate"]
+  evaluation: ["evaluate", "assess", "judge", "appraise", "estimate", "measure", "benchmark"]
+
+# Stop words to filter out
+stop_words: ["the", "and", "for", "are", "but", "not", "you", "all", "can", "her", "was", "one", "our", "had", "day", "get", "has", "him", "how", "man", "new", "now", "old", "see", "two", "way", "who", "boy", "did", "its", "let", "put", "say", "she", "too", "use", "this", "that", "with", "have", "they", "will", "been", "from", "would", "there", "their", "what", "about", "which", "when", "make", "like", "into", "time", "very", "after", "first", "well", "much", "also", "many", "such", "only", "some", "other", "then", "them", "these", "come", "could", "want", "look", "over", "think", "where", "just", "work", "life", "even", "back", "any", "good", "woman", "through", "down", "way", "may", "call"]
+
+# Domain keywords that suggest specific domains
+domain_indicators:
+  travel: ["destination", "hotel", "restaurant", "tourist", "vacation", "trip", "travel", "booking", "accommodation", "sightseeing"]
+  academic: ["research", "study", "academic", "scholarly", "thesis", "literature", "methodology", "findings", "education"]
+  business: ["business", "financial", "revenue", "profit", "market", "investment", "strategy", "competitive", "portfolio"]
+  technical: ["software", "development", "technology", "programming", "system", "data", "analytics", "engineering"]
+  healthcare: ["medical", "health", "clinical", "patient", "healthcare", "treatment", "diagnosis", "therapy"]
+  legal: ["legal", "law", "regulation", "compliance", "contract", "litigation", "rights"]

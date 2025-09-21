@@ -147,6 +147,11 @@ graph TD
 
 ---
 
+## Deployed links
+[Client Side](https://frontend-pearl-omega-64.vercel.app/)
+
+[Server-side](https://dashboard.render.com/web/srv-d381bbre5dus739pplp0)
+
 ## 📝 Testing Instructions
 
 ### Frontend

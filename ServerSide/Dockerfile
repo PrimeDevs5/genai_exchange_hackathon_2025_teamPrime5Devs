@@ -1,52 +1,46 @@
-# Simplified Dockerfile for Render deployment
-FROM python:3.9-slim
+# Use Python 3.11 slim image for smaller size
+FROM python:3.11-slim
 
 # Set working directory
 WORKDIR /app
 
-# Set environment variables
-ENV PYTHONUNBUFFERED=1
-ENV PYTHONPATH=/app
-ENV API_HOST=0.0.0.0
-ENV PORT=8000
-ENV DEBUG=false
-ENV OPENCV_IO_ENABLE_OPENEXR=0
-
-# Install minimal system dependencies for headless OpenCV
-RUN apt-get update && apt-get install -y --no-install-recommends \
+# Install system dependencies for PDF processing and OCR
+RUN apt-get update && apt-get install -y \
     tesseract-ocr \
     tesseract-ocr-eng \
+    libgl1-mesa-glx \
     libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender-dev \
     libgomp1 \
+    libglib2.0-0 \
     curl \
-    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements and install Python dependencies
+# Copy requirements first for better caching
 COPY requirements.txt .
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
 
-# Download NLTK data in separate steps for better caching
-RUN python -c "import nltk; nltk.download('punkt', quiet=True)" || echo "punkt download failed"
-RUN python -c "import nltk; nltk.download('stopwords', quiet=True)" || echo "stopwords download failed"
-RUN python -c "import nltk; nltk.download('wordnet', quiet=True)" || echo "wordnet download failed"
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
-COPY *.py ./
-COPY *.yaml ./
-COPY *.yml ./
-COPY Collections/ ./Collections/
+COPY . .
 
-# Create necessary directories
-RUN mkdir -p uploads temp output logs
+# Create directory for temporary files
+RUN mkdir -p /tmp/pdf_processing
 
-# Expose port (dynamic from environment)
-EXPOSE $PORT
+# Set environment variables
+ENV PYTHONPATH=/app
+ENV PYTHONUNBUFFERED=1
 
-# Health check (dynamic port)
+# Expose port (Render will set PORT environment variable)
+EXPOSE 8000
+
+# Health check
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:$PORT/health || exit 1
+    CMD curl -f http://localhost:8000/health || exit 1
 
-# Run the application (use PORT environment variable)
-CMD ["sh", "-c", "python -m uvicorn api_simple:app --host 0.0.0.0 --port $PORT"]
+# Run the application
+# Use PORT environment variable that Render provides
+CMD uvicorn api:app --host 0.0.0.0 --port $PORT

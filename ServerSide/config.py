@@ -4,6 +4,10 @@ Configuration settings for the PDF Document Intelligence API
 
 import os
 from pathlib import Path
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 class Settings:
     # API Configuration
@@ -25,6 +29,16 @@ class Settings:
     # Model Configuration
     MODEL_CACHE_DIR: str = os.getenv("MODEL_CACHE_DIR", "models")
     USE_LIGHTWEIGHT_MODELS: bool = os.getenv("USE_LIGHTWEIGHT_MODELS", "false").lower() == "true"
+    
+    # Google Gemini AI Configuration
+    GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "")
+    ENABLE_GEMINI_ANALYSIS: bool = os.getenv("ENABLE_GEMINI_ANALYSIS", "true").lower() == "true"
+    GEMINI_MODEL: str = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
+    GEMINI_TEMPERATURE: float = float(os.getenv("GEMINI_TEMPERATURE", "0.1"))
+    
+    # Authentication Configuration
+    JWT_SECRET_KEY: str = os.getenv("JWT_SECRET_KEY", "your-secret-key-change-in-production")
+    TOKEN_EXPIRE_HOURS: int = int(os.getenv("TOKEN_EXPIRE_HOURS", "24"))
     
     # Logging Configuration
     LOG_LEVEL: str = os.getenv("LOG_LEVEL", "INFO")

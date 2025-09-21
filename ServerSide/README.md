@@ -1,404 +1,299 @@
-# PDF Document Intelligence System
-## Persona-Driven Document Analysis with Web API
+# Legal AI Analysis API - ServerSide
 
-### 🎯 **Overview**
-This system provides both CLI and Web API interfaces for intelligent document analysis that extracts and prioritizes the most relevant sections from PDF collections based on specific personas and their job-to-be-done requirements.
+A ultra-simplified FastAPI server that provides AI-powered legal document analysis using Google Gemini AI. This API extracts text from PDF documents and performs detailed legal clause analysis with risk assessment.
 
-**NEW**: 🌐 **Web API Support** - Upload PDFs and get analysis results via REST API endpoints!
+## 🎯 Overview
 
----
+This server provides a clean, stateless API for legal document analysis:
+- **PDF Upload** → **Text Extraction** → **AI Analysis** → **Detailed Results**
 
-## 📋 **Table of Contents**
-1. [Features](#features)
-2. [Quick Start](#quick-start)
-3. [Installation & Usage](#installation--usage)
-4. [API Usage](#api-usage)
-5. [File Structure](#file-structure)
-6. [Docker Deployment](#docker-deployment)
-7. [Original Challenge Info](#original-challenge-info)
+## 🚀 Features
 
----
+- **📄 PDF Text Extraction**: Advanced OCR with table filtering
+- **🤖 AI Legal Analysis**: Powered by Google Gemini AI
+- **⚖️ Risk Assessment**: High/Medium/Low risk classification
+- **📋 Clause Analysis**: Detailed breakdown of legal provisions
+- **🎯 Law Citations**: Applicable legal principles identification
+- **⚡ Fast Processing**: Immediate results without storage overhead
 
-## 🚀 **Features**
+## 📁 Project Structure
 
-### Core Functionality
-- **Persona-Driven Analysis**: Extracts sections most relevant to specific user personas
-- **Multi-PDF Processing**: Handles collections of 3-10 related PDFs
-- **Intelligent Section Ranking**: Uses NLP to rank sections by importance
-- **Fast Processing**: Optimized for ≤60 seconds processing time
-- **CPU-Only**: No GPU required, works on any machine
+```
+ServerSide/
+├── .env                    # Environment configuration (Gemini API key)
+├── api.py                  # Main FastAPI application (2 endpoints)
+├── config.py               # Configuration management
+├── gemini_service.py       # Google Gemini AI integration
+├── requirements.txt        # Python dependencies
+├── text_extractor.py       # PDF text extraction with OCR
+├── Dockerfile              # Docker configuration for deployment
+└── README.md              # This documentation
+```
 
-### New Web API Features
-- **File Upload**: Upload PDFs via web interface
-- **Asynchronous Processing**: Background job processing with status tracking
-- **RESTful API**: Complete REST API with OpenAPI/Swagger documentation
-- **Multiple Modes**: Both CLI and web API modes available
-- **Docker Support**: Easy deployment with Docker containers
+## 🔧 Installation & Setup
 
----
+### Prerequisites
+- Python 3.8+
+- Google Gemini API Key
+- Tesseract OCR (for PDF text extraction)
 
-## � **Quick Start**
-
-### Option 1: Web API Mode (Recommended)
+### 1. Clone Repository
 ```bash
-# Install dependencies
+git clone <repository-url>
+cd ServerSide
+```
+
+### 2. Install Dependencies
+```bash
 pip install -r requirements.txt
-
-# Start API server
-python main.py --api
-# Or use: ./start_api.sh (Linux/Mac) or start_api.bat (Windows)
-
-# API will be available at http://localhost:8000
-# Interactive docs at http://localhost:8000/docs
 ```
 
-### Option 2: CLI Mode (Original)
+### 3. Configure Environment
+Create a `.env` file:
+```env
+GEMINI_API_KEY=your-actual-gemini-api-key-here
+GEMINI_MODEL=gemini-1.5-flash
+```
+
+### 4. Install Tesseract OCR
+
+**Windows:**
 ```bash
-# Install dependencies
-pip install -r requirements.txt
-
-# Run CLI processing
-python main.py
-# Or use: ./start_cli.sh (Linux/Mac) or start_cli.bat (Windows)
+# Download and install from: https://github.com/UB-Mannheim/tesseract/wiki
+# Add to PATH: C:\Program Files\Tesseract-OCR
 ```
 
-### Option 3: Docker Deployment
+**Ubuntu/Debian:**
 ```bash
-# API Mode (default)
-docker-compose up pdf-intelligence-api
-
-# CLI Mode
-docker-compose --profile cli up pdf-intelligence-cli
+sudo apt-get update
+sudo apt-get install tesseract-ocr
 ```
 
----
-
-## 🌐 **API Usage**
-
-### Upload and Process PDFs
+**macOS:**
 ```bash
-curl -X POST "http://localhost:8000/upload-pdfs" \
-  -F "files=@document1.pdf" \
-  -F "files=@document2.pdf" \
-  -F "persona=College student planning a trip with friends" \
-  -F "job_to_be_done=Plan a 5-day trip to South of France"
+brew install tesseract
 ```
 
-### Check Processing Status
+### 5. Run Server
 ```bash
-curl "http://localhost:8000/job/{job_id}"
+uvicorn api:app --reload --host 0.0.0.0 --port 8000
 ```
 
-### Get Results
-```bash
-curl "http://localhost:8000/job/{job_id}/result"
+## 🌐 API Endpoints
+
+### Health Check
+```http
+GET /health
 ```
 
-### Interactive Documentation
-Visit `http://localhost:8000/docs` for complete API documentation with interactive testing.
-
-📖 **Full API Documentation**: See [API_DOCUMENTATION.md](API_DOCUMENTATION.md)
-
----
-
-## 🎯 **Problem Statement**
-
-**Input:** 
-- Document Collection: 3-10 related PDFs
-- Persona Definition: Role description with specific expertise areas
-- Job-to-be-Done: Concrete task the persona needs to accomplish
-
-**Output:** JSON structure containing:
-- Metadata (documents, persona, task, timestamp)
-- Extracted sections ranked by importance
-- Refined subsection analysis with relevant text
-
-**Constraints:**
-- CPU-only processing
-- Model size ≤ 1GB
-- Processing time ≤ 60 seconds
-- No internet access during execution
-
----
-
-## 🏗️ **Solution Architecture**
-
-### **Core Components**
-
-1. **Text Extractor** (`text_extractor.py`)
-   - Advanced OCR with table detection/removal
-   - Multi-threaded page processing
-   - Page-aware text extraction
-
-2. **Section Extractor** (`section_extractor.py`)
-   - Font-based heading detection
-   - Semantic section identification
-   - Document structure preservation
-
-3. **Persona Analyzer** (`persona_analyzer.py`)
-   - Domain-specific keyword mapping
-   - Task requirement extraction
-   - Weighted relevance scoring
-
-4. **Relevance Scorer** (`relevance_scorer.py`)
-   - Multi-factor section scoring
-   - TF-IDF similarity calculation
-   - Position and quality weighting
-
-5. **Subsection Extractor** (`subsection_extractor.py`)
-   - Paragraph-level content extraction
-   - Relevance-based filtering
-   - Text refinement and optimization
-
-6. **Collection Processor** (`main.py`)
-   - Auto-discovery of collections
-   - Batch processing orchestration
-   - Output generation and validation
-
----
-
-## 🚀 **Installation & Usage**
-
-### **Setup Options**
-
-#### **Option 1: Docker (Recommended)**
-```bash
-# Build the Docker image
-docker build --platform linux/amd64 -t adobe-challenge-1b:teamDSA .
-
-
-# put the sample collections into the Collection folder (check Troubleshooting if you face any issue)
-
-# Run the container with volume mounts
-docker run --rm \
-  -v $(pwd)/Collections:/app/Collections \
-  --network none \
-  adobe-challenge-1b:teamDSA
-
-
-# review the output.json files
-```
-
-#### **Option 2: Local Setup**
-```bash
-# Install Python dependencies
-pip install -r requirements.txt
-
-# Install system dependencies (Ubuntu/Debian)
-sudo apt-get install tesseract-ocr tesseract-ocr-eng
-
-# Run the application
-python3 main.py
-```
-
----
-
-## 📁 **File Structure**
-
-```
-Adobe_India_Hackathon_25_Team_DSA_Challenge_1b/
-├── main.py                     # Main collection processor
-├── text_extractor.py           # PDF text extraction with OCR
-├── heading_extractor.py        # Document heading detection
-├── persona_analyzer.py         # Persona and task analysis
-├── relevance_scorer.py         # Multi-factor relevance scoring
-├── subsection_extractor.py     # Subsection extraction and refinement
-├── requirements.txt            # Python dependencies
-├── Dockerfile                  # Container configuration
-├── docker-compose.yml          # Multi-container setup
-├── README.md                   # This file
-├── approach_explanation.md     # Detailed methodology documentation
-└── Collections/                # Collections folder
-    └── Collection N/           # Individual collection folders
-        ├── challenge1b_input.json  # Input specification (REQUIRED NAME)
-        ├── PDFs/               # Source documents folder
-        │   ├── document1.pdf
-        │   └── document2.pdf
-        └── challenge1b_output.json # Generated results
-```
-
-**⚠️ Important File Naming:**
-- Input file MUST be named: `challenge1b_input.json`
-- PDFs should be placed in a `PDFs/` or `PDFs` folder
-- Output will be generated as: `challenge1b_output.json`
-
----
-
-## 📝 **Input/Output Format**
-
-### **Input Structure** (`challenge1b_input.json`)
+**Response:**
 ```json
 {
-    "challenge_info": {
-        "challenge_id": "round_1b_002",
-        "test_case_name": "travel_planner",
-        "description": "France Travel"
+  "status": "healthy",
+  "message": "Legal AI Analysis API is operational",
+  "timestamp": "2025-09-21T20:30:00",
+  "ai_enabled": true,
+  "version": "3.0.0"
+}
+```
+
+### Legal Document Analysis
+```http
+POST /analyze-legal-document
+Content-Type: multipart/form-data
+```
+
+**Request:**
+- `files`: PDF file(s) to analyze
+
+**Response:**
+```json
+{
+  "status": "completed",
+  "message": "Successfully analyzed 1 legal documents",
+  "files": ["contract.pdf"],
+  "total_documents": 1,
+  "total_clauses_analyzed": 5,
+  "legal_analysis": [
+    {
+      "clause": "Party agrees to pay liquidated damages of $10,000",
+      "risk": "High",
+      "laws": "Contract law principles regarding liquidated damages; UCC Article 2 for sales contracts",
+      "summary": "This clause creates high risk due to significant financial exposure. Liquidated damages must be reasonable and proportionate to actual harm..."
     },
-    "documents": [
-        {
-            "filename": "South of France - Cities.pdf",
-            "title": "South of France - Cities"
-        }
-    ],
-    "persona": {
-        "role": "Travel Planner"
-    },
-    "job_to_be_done": {
-        "task": "Plan a trip of 4 days for a group of 10 college friends."
+    {
+      "clause": "Termination may occur upon 30 days written notice",
+      "risk": "Medium", 
+      "laws": "Contract law principles regarding termination; employment law if applicable",
+      "summary": "Standard termination clause with reasonable notice period. Medium risk due to potential business disruption..."
     }
+  ],
+  "analyzed_at": "2025-09-21T20:30:00"
 }
 ```
 
-### **Output Structure** (`challenge1b_output.json`)
+## 🔗 Integration Guide
+
+### Frontend Integration
+```javascript
+// Simple file upload
+const formData = new FormData();
+formData.append('files', pdfFile);
+
+fetch('http://localhost:8000/analyze-legal-document', {
+    method: 'POST',
+    body: formData
+})
+.then(response => response.json())
+.then(data => {
+    // Process legal analysis results
+    console.log(data.legal_analysis);
+});
+```
+
+### cURL Example
+```bash
+curl -X POST "http://localhost:8000/analyze-legal-document" \
+  -F "files=@contract.pdf" \
+  -H "accept: application/json"
+```
+
+## 🐳 Docker Deployment
+
+### Build Image
+```bash
+docker build -t legal-ai-api .
+```
+
+### Run Container
+```bash
+docker run -p 8000:8000 -e GEMINI_API_KEY=your-key legal-ai-api
+```
+
+## ☁️ Deploy on Render
+
+1. **Connect Repository** to Render
+2. **Service Type**: Web Service
+3. **Build Command**: `pip install -r requirements.txt`
+4. **Start Command**: `uvicorn api:app --host 0.0.0.0 --port $PORT`
+5. **Environment Variables**:
+   - `GEMINI_API_KEY`: Your Google Gemini API key
+   - `GEMINI_MODEL`: `gemini-1.5-flash`
+
+## 📊 Response Format Details
+
+The API returns legal analysis in this exact format:
+
 ```json
 {
-    "metadata": {
-        "input_documents": ["document1.pdf", "document2.pdf"],
-        "persona": "Travel Planner",
-        "job_to_be_done": "Plan a trip of 4 days for a group of 10 college friends.",
-        "processing_timestamp": "2025-07-10T15:31:22.632389"
-    },
-    "extracted_sections": [
-        {
-            "document": "document1.pdf",
-            "section_title": "Section Title",
-            "importance_rank": 1,
-            "page_number": 1
-        }
-    ],
-    "subsection_analysis": [
-        {
-            "document": "document1.pdf",
-            "refined_text": "Extracted and refined text content...",
-            "page_number": 1
-        }
-    ]
+  "clause": "Specific legal clause text",
+  "risk": "High/Medium/Low",
+  "laws": "Applicable legal principles and statutes",
+  "summary": "Detailed analysis with recommendations"
 }
 ```
 
----
+### Risk Levels
+- **High**: Significant legal or financial exposure
+- **Medium**: Moderate risk requiring attention  
+- **Low**: Minor risk or standard language
 
-## ⚡ **Performance Specifications**
+## 🔍 Technical Details
 
-### **Processing Capabilities**
-- **Document Capacity**: 3-10 PDFs per collection
-- **Page Limit**: Up to 50 pages per document
-- **File Size**: Supports up to 100MB PDFs
-- **Collection Processing**: Unlimited collections
+### Text Extraction Process
+1. **PDF → Images**: Convert PDF pages to high-resolution images
+2. **OCR Processing**: Extract text using Tesseract OCR
+3. **Table Filtering**: Remove structured data/tables for cleaner text
+4. **Multi-threading**: Parallel processing for faster extraction
 
-### **Performance Metrics**
-- **Processing Speed**: <60 seconds for 5 documents
-- **Memory Usage**: <4GB RAM
-- **Model Size**: <1GB total footprint
-- **CPU Utilization**: Multi-threaded optimization
+### AI Analysis Pipeline
+1. **Text Preprocessing**: Clean and structure extracted text
+2. **Gemini AI Analysis**: Send to Google Gemini for legal analysis
+3. **Response Parsing**: Convert AI response to structured format
+4. **Risk Assessment**: Automatic risk level classification
 
-### **Quality Assurance**
-- **Section Relevance**: Multi-factor scoring algorithm
-- **Subsection Quality**: Semantic coherence preservation
-- **Output Consistency**: Standardized JSON format
-- **Error Handling**: Graceful degradation for corrupted files
+## 🚨 Error Handling
 
----
+The API includes comprehensive error handling:
 
-## 🐳 **Docker Deployment**
+- **400 Bad Request**: Invalid file format or missing files
+- **503 Service Unavailable**: Gemini AI not configured
+- **500 Internal Server Error**: Processing failures
 
-### **Container Specifications**
+## 📈 Performance
 
+- **Processing Time**: ~10-30 seconds per document (depending on size)
+- **File Size Limit**: No explicit limit (memory dependent)
+- **Concurrent Requests**: Supports multiple simultaneous uploads
+- **Memory Usage**: Temporary files cleaned automatically
 
-## 🔧 **Troubleshooting**
+## 🔒 Security Notes
 
-### **Common Issues**
+- **Stateless Design**: No data persistence or user tracking
+- **Temporary Storage**: Files deleted immediately after processing
+- **API Key Security**: Store Gemini API key in environment variables
+- **CORS Enabled**: Configure origins as needed for production
 
-#### **File Naming Errors**
-```
-❌ Error: "Input file found but with incorrect name: 'challenge1b_input .json'"
-✅ Solution: Rename file to 'challenge1b_input.json' (remove extra space)
+## 🛠️ Development
 
-❌ Error: "No input.json file found. Required name: 'challenge1b_input.json'"
-✅ Solution: Ensure input file is named exactly 'challenge1b_input.json'
-```
-
-#### **Folder Structure Issues**
-```
-❌ Error: "No PDF/PDFs folder found"
-✅ Solution: Create 'PDFs' folder and place all PDF files inside it
-
-❌ Error: "No collections found!"
-✅ Solution: Ensure collections are in 'Collections' folder or named 'Collection X'
-```
-
-#### **Docker Issues**
+### Running Tests
 ```bash
-# Fix permission issues
-sudo chmod -R 755 Collections/
+# Test Gemini AI connection
+python -c "from gemini_service import GeminiLegalAnalyzer; from config import settings; analyzer = GeminiLegalAnalyzer(settings.GEMINI_API_KEY); print('✅ Gemini AI working')"
 
-# Rebuild if dependencies changed
-docker build --no-cache -t adobe-challenge-1b:teamDSA .
+# Test text extraction
+python -c "from text_extractor import extract_text_fast; print('✅ Text extractor ready')"
 ```
 
----
-
-## 🔧 **Configuration & Customization**
-
-
-### **Relevance Tuning**
-Adjust scoring weights in `relevance_scorer.py`:
-```python
-total_score = (
-    keyword_score * 0.4 +     # Keyword matching weight
-    title_score * 0.25 +      # Title relevance weight
-    position_score * 0.2 +    # Position importance weight
-    length_score * 0.15       # Content quality weight
-)
+### Debug Mode
+```bash
+uvicorn api:app --reload --log-level debug
 ```
 
-### **Output Customization**
-Modify output format in `main.py` collection processor.
+## 📝 Dependencies
+
+See `requirements.txt` for complete list. Key dependencies:
+- **FastAPI**: Web framework
+- **PyMuPDF**: PDF processing
+- **Pytesseract**: OCR text extraction
+- **Google Generative AI**: Gemini AI integration
+- **OpenCV**: Image processing
+
+## 🆘 Troubleshooting
+
+### Common Issues
+
+**Tesseract not found:**
+```bash
+# Ensure Tesseract is in PATH
+tesseract --version
+```
+
+**Gemini API errors:**
+- Verify API key is correct
+- Check quota/billing in Google Cloud Console
+- Ensure Gemini API is enabled
+
+**PDF processing failures:**
+- Check file is valid PDF
+- Ensure sufficient disk space for temporary files
+- Verify PyMuPDF installation
+
+## 📄 License
+
+[Add your license information here]
+
+## 👥 Contributing
+
+[Add contribution guidelines here]
+
+## 📞 Support
+
+For issues and questions:
+- Create GitHub issues for bugs
+- Check logs for detailed error messages
+- Verify environment configuration
 
 ---
 
-## 📊 **Testing & Validation**
-
-### **Test Collections**
-The system includes sample collections for validation:
-- Travel planning scenario
-- Academic research context
-- Business analysis use case
-
-### **Validation Metrics**
-- Section relevance accuracy
-- Subsection quality assessment
-- Processing time compliance
-- Memory usage monitoring
-
----
-
-## 🤝 **Team Information**
-
-**Team:** DSA (Devraj, Saksham, and Anuj)  
-**Challenge:** Round 1B - Persona-Driven Document Intelligence  
-**Theme:** "Connect What Matters — For the User Who Matters"
-
-**Key Features:**
-- ✅ Multi-persona support
-- ✅ Intelligent section ranking with multi-factor scoring
-- ✅ Advanced OCR with table detection
-- ✅ Subsection extraction and refinement
-- ✅ Docker containerization for reproducible deployment
-- ✅ CPU-only processing for broad compatibility
-- ✅ Offline operation with pre-packaged models
-
----
-
-
-## 📄 **License & Usage**
-
-This solution is developed for the Adobe India Hackathon 2025. All code and documentation are provided for evaluation purposes.
-
-For questions or technical support, please refer to the approach_explanation.md for detailed methodology information.
-
-<img width="1780" height="624" alt="image" src="https://github.com/user-attachments/assets/84e24c34-b27e-40a0-99d5-4e02e9868d0b" />
-<img width="1864" height="651" alt="image" src="https://github.com/user-attachments/assets/6e615c21-b266-4778-ad26-8b93aab8da31" />
-
-
-
+**Ready to analyze legal documents with AI!** 🚀⚖️🤖

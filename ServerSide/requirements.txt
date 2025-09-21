@@ -1,24 +1,24 @@
-# Core PDF Processing Dependencies
-PyMuPDF==1.23.5
-numpy>=1.21.0
-pytesseract>=0.3.8
+# Essential requirements for Ultra-Simplified Legal AI Analysis API
+# Only the dependencies we actually use
+
+# Web Framework
+fastapi==0.104.1
+uvicorn==0.24.0
+python-multipart==0.0.6
+aiofiles==23.2.1
+
+# PDF Text Extraction
+PyMuPDF==1.23.14
+pytesseract==0.3.10
 Pillow>=8.0.0
-PyYAML>=6.0
+opencv-python>=4.5.0
+numpy>=1.21.0
 
-# NLP and Text Processing Dependencies
-scikit-learn>=1.0.0
-nltk>=3.7
-sentence-transformers>=2.0.0
-transformers>=4.20.0
+# Google Gemini AI
+google-generativeai==0.3.2
 
-# Web Framework Dependencies
-fastapi>=0.100.0
-uvicorn>=0.20.0
-python-multipart>=0.0.5
-python-jose[cryptography]>=3.3.0
-passlib[bcrypt]>=1.7.4
+# Environment Configuration  
+python-dotenv==1.0.0
 
-# Additional utilities
-regex>=2022.1.0
-tqdm>=4.60.0
-aiofiles>=0.8.0
+# Core dependencies
+pydantic==2.5.0

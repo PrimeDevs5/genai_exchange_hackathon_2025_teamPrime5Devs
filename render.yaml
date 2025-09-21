@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: legal-ai-analysis-api
+    env: docker
+    dockerfilePath: ./ServerSide/Dockerfile
+    dockerContext: ./ServerSide
+    plan: starter
+    region: oregon
+    branch: main
+    buildCommand: ""
+    startCommand: ""
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false # Set this manually in Render dashboard
+      - key: GEMINI_MODEL
+        value: gemini-1.5-flash
+      - key: PYTHONUNBUFFERED
+        value: "1"
+    autoDeploy: true
+    healthCheckPath: /health
